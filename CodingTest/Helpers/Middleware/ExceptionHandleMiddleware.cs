@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace CodingTest.Middleware;
+namespace CodingTest.Helpers.Middleware;
 
 public class ExceptionHandleMiddleware(RequestDelegate next, ILogger<ExceptionHandleMiddleware> logger)
 {

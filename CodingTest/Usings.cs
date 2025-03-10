@@ -1,6 +1,14 @@
-﻿global using CodingTest.Data.Dtos;
+﻿global using CodingTest.BackgroundServices;
+global using CodingTest.Data;
+global using CodingTest.Data.Dtos;
 global using CodingTest.Data.Entities;
-global using CodingTest.Middleware;
+global using CodingTest.Helpers;
+global using CodingTest.Helpers.Middleware;
 global using CodingTest.Services;
+global using FluentValidation;
+global using LinqKit;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
 global using System.Net;
+global using System.Text;
+global using System.Text.Json;

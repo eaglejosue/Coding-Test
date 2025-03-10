@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿namespace CodingTest.Data;
 
-namespace CodingTest.Data;
-
-public class CodingTest(DbContextOptions<CodingTest> o, IConfiguration config) : DbContext(o)
+public class DbCodingTest(DbContextOptions<DbCodingTest> o, IConfiguration config) : DbContext(o)
 {
     public DbSet<Customer> Customers => Set<Customer>();
 

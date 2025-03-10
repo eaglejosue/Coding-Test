@@ -1,7 +1,7 @@
 namespace CodingTest.Controllers;
 
 [ApiController]
-[Route("api/atm")]
+[Route("api/[controller]")]
 public class AtmController(
     IAtmService service,
     IInternalNotificationService notificationService) : ControllerBase

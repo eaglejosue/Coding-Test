@@ -1,7 +1,7 @@
 namespace CodingTest.Controllers;
 
 [ApiController]
-[Route("api/customer")]
+[Route("api/[controller]")]
 public class CustomerController(
     ICustomerService service,
     IInternalNotificationService notificationService) : ControllerBase
@@ -19,19 +19,24 @@ public class CustomerController(
     [HttpPost]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    public async Task<IActionResult> PostCustomers([FromBody] List<Customer> customers)
+    public IActionResult PostCustomers([FromBody] List<Customer> models)
     {
-        await service.AddCustomersAsync(customers);
+        var customers = service.AddCustomers(models);
         
         if (notificationService.HasNotifications)
         {
             var notificationWithStatusCode = notificationService.Notifications.FirstOrDefault(f => f.HttpStatusCode != null);
             if (notificationWithStatusCode != null)
-                return StatusCode(notificationWithStatusCode.HttpStatusCode.GetHashCode(), BaseResponseError.New(notification.Notifications));
-
-            return BadRequest(BaseResponseError.New(notification.Notifications));
+                return StatusCode(notificationWithStatusCode.HttpStatusCode.GetHashCode(), notificationService.Notifications);
         }
 
-        return Ok();
+        if (customers?.Count == 0)
+            return BadRequest(new { Message = notificationService.Notifications });
+
+        return Ok(new
+        {
+            Message = notificationService.Notifications,
+            Result = customers
+        });
     }
 }
