@@ -52,7 +52,6 @@ public class CustomerService(
             {
                 var customerIds = customers.Select(s => s.Id);
                 var existingCustomers = db.Customers.ToList();
-
                 var existingCustomerIdsHash = existingCustomers.Select(s => s.Id).ToHashSet();
 
                 var validCustomers = new List<Customer>(0);
@@ -73,6 +72,9 @@ public class CustomerService(
 
                     validCustomers.Add(customer);
                 }
+
+                if (validCustomers.Count == 0)
+                    return default;
 
                 var allCustomers = existingCustomers.Concat(validCustomers).ToList();
                 var sortedCustomers = SortCustomers(allCustomers);

@@ -1,4 +1,4 @@
-﻿namespace CodingTest.BackgroundServices;
+﻿namespace CodingTest.Services.BackgroundServices;
 
 public class SimulateParallelRequestsToCustomerAPI(
     IConfiguration configuration,
@@ -6,6 +6,9 @@ public class SimulateParallelRequestsToCustomerAPI(
 {
     private static readonly HttpClient _httpClient = new();
     private readonly int _delayInSeconds = configuration.GetValue<int?>("BackgroundService:DelayInSeconds") ?? 5;
+    private readonly int _runQtd = configuration.GetValue<int?>("BackgroundService:RunQtd") ?? 10;
+    private int _executionCount = 0;
+    private DateTime _lastExecutionDate = DateTime.UtcNow.Date;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -15,20 +18,39 @@ public class SimulateParallelRequestsToCustomerAPI(
         {
             try
             {
-                var customers = GenerateRandomCustomers(2); // Generate 2 customers per request
+                if (_executionCount >= _runQtd && _lastExecutionDate == DateTime.UtcNow.Date)
+                {
+                    logger.LogInformation("Maximum executions reached for today. Waiting for next day.");
+                    await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+                    continue;
+                }
 
-                // Simulate POST request
-                var content = new StringContent(JsonSerializer.Serialize(customers), Encoding.UTF8, "application/json");
+                if (_lastExecutionDate != DateTime.UtcNow.Date)
+                {
+                    _executionCount = 0;
+                    _lastExecutionDate = DateTime.UtcNow.Date;
+                }
+
+                var customers = GenerateRandomCustomers(2);
+                var customersString = JsonSerializer.Serialize(customers);
+                logger.LogInformation("POST Customers: ", customersString);
+
+                var content = new StringContent(customersString, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync("http://localhost:5000/api/customer", content, stoppingToken);
 
                 if (response.IsSuccessStatusCode)
-                    Console.WriteLine("Customers added successfully.");
+                    logger.LogInformation("Customers added successfully.");
                 else
-                    Console.WriteLine("Failed to add customers.");
+                    logger.LogInformation("Failed to add customers.");
 
-                // Simulate GET request to see all customers
+                logger.LogInformation("POST Customers - StatusCode: ", response.StatusCode);
+                var responseContent = await response.Content.ReadAsStringAsync(stoppingToken);
+                logger.LogInformation("POST Customers - Result: ", responseContent);
+
                 var getResponse = await _httpClient.GetStringAsync("http://localhost:5000/api/customer", stoppingToken);
-                Console.WriteLine(getResponse);
+                logger.LogInformation("GET Customers - Result: ", getResponse);
+
+                _executionCount++;
             }
             catch (Exception ex)
             {

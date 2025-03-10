@@ -30,7 +30,7 @@ public class CustomerController(
                 return StatusCode(notificationWithStatusCode.HttpStatusCode.GetHashCode(), notificationService.Notifications);
         }
 
-        if (customers?.Count == 0)
+        if (customers == null || customers?.Count == 0)
             return BadRequest(new { Message = notificationService.Notifications });
 
         return Ok(new

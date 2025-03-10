@@ -14,7 +14,7 @@ public class AddCustomersValidator : AbstractValidator<Customer>
             .NotEmpty().WithMessage("Last Name is required.");
 
         RuleFor(c => c.Age)
-            .NotNull().NotEmpty().WithMessage("Id is required.")
+            .NotNull().NotEmpty().WithMessage("Age is required.")
             .GreaterThan(18).WithMessage("Age must be greater than 18.");
     }
 }
