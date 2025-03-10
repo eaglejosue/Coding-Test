@@ -33,7 +33,7 @@ public class SimulateParallelRequestsToCustomerAPI(
 
                 var customers = GenerateRandomCustomers(2);
                 var customersString = JsonSerializer.Serialize(customers);
-                logger.LogInformation("POST Customers: ", customersString);
+                logger.LogInformation(string.Concat("POST Customers: ", customersString));
 
                 var content = new StringContent(customersString, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PostAsync("http://localhost:5000/api/customer", content, stoppingToken);
@@ -43,12 +43,12 @@ public class SimulateParallelRequestsToCustomerAPI(
                 else
                     logger.LogInformation("Failed to add customers.");
 
-                logger.LogInformation("POST Customers - StatusCode: ", response.StatusCode);
+                logger.LogInformation(string.Concat("POST Customers - StatusCode: ", response.StatusCode));
                 var responseContent = await response.Content.ReadAsStringAsync(stoppingToken);
-                logger.LogInformation("POST Customers - Result: ", responseContent);
+                logger.LogInformation(string.Concat("POST Customers - Result: ", responseContent));
 
                 var getResponse = await _httpClient.GetStringAsync("http://localhost:5000/api/customer", stoppingToken);
-                logger.LogInformation("GET Customers - Result: ", getResponse);
+                logger.LogInformation(string.Concat("GET Customers - Result: ", getResponse));
 
                 _executionCount++;
             }
@@ -72,16 +72,16 @@ public class SimulateParallelRequestsToCustomerAPI(
         var random = new Random();
         var customers = new List<Customer>();
 
+        var idRandon = random.Next(1, 100);
+
         for (int i = 0; i < count; i++)
         {
-            var firstName = firstNames[random.Next(firstNames.Length)];
-            var lastName = lastNames[random.Next(lastNames.Length)];
-            var age = random.Next(10, 90);
             var customer = new Customer
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Age = age
+                Id = i + idRandon,
+                FirstName = firstNames[random.Next(firstNames.Length)],
+                LastName = lastNames[random.Next(lastNames.Length)],
+                Age = random.Next(10, 90)
             };
 
             customers.Add(customer);

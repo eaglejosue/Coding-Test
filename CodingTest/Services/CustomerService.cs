@@ -80,6 +80,8 @@ public class CustomerService(
                 var sortedCustomers = SortCustomers(allCustomers);
 
                 db.Customers.RemoveRange(existingCustomers);
+                db.SaveChanges();
+
                 db.Customers.AddRange(sortedCustomers);
                 db.SaveChanges();
 
