@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace CodingTest.Migrations
+namespace Api.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

@@ -1,4 +1,4 @@
-﻿namespace CodingTest.Data.Dtos;
+﻿namespace Api.Data.Dtos;
 
 public class BaseResponse<T>(T? data, IReadOnlyCollection<InternalNotification>? messages = null) where T : class
 {

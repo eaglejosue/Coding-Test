@@ -1,7 +1,7 @@
-﻿global using CodingTest.Data;
-global using CodingTest.Data.Dtos;
-global using CodingTest.Data.Entities;
-global using CodingTest.Services;
+﻿global using Api.Data;
+global using Api.Data.Dtos;
+global using Api.Data.Entities;
+global using Api.Services;
 global using FluentValidation;
 global using FluentValidation.Results;
 global using Microsoft.EntityFrameworkCore;

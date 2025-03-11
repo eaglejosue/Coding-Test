@@ -1,4 +1,4 @@
-﻿namespace CodingTest.Data.Entities;
+﻿namespace Api.Data.Entities;
 
 public sealed class Customer
 {

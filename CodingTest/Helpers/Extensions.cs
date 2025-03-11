@@ -1,4 +1,4 @@
-﻿namespace CodingTest.Helpers;
+﻿namespace Api.Helpers;
 
 public static class Extensions
 {

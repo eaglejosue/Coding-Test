@@ -1,4 +1,4 @@
-﻿namespace CodingTest.Services;
+﻿namespace Api.Services;
 
 public record InternalNotification(
     string? Key,

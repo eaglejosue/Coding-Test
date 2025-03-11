@@ -1,4 +1,4 @@
-namespace CodingTest.Controllers;
+namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

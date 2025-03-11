@@ -1,4 +1,4 @@
-﻿namespace CodingTest.Data.Validations;
+﻿namespace Api.Data.Validations;
 
 public class AddCustomersValidator : AbstractValidator<Customer>
 {

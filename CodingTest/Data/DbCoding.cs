@@ -1,4 +1,4 @@
-﻿namespace CodingTest.Data;
+﻿namespace Api.Data;
 
 public class DbCoding(DbContextOptions<DbCoding> o) : DbContext(o)
 {

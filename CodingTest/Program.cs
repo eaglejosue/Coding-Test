@@ -1,6 +1,6 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<DbCoding>(o => o.UseSqlite("DataSource=CodingTest.db;Cache=Shared", b => b.MigrationsAssembly("CodingTest")));
+builder.Services.AddDbContext<DbCoding>(o => o.UseSqlite("DataSource=CodingTest.db;Cache=Shared", b => b.MigrationsAssembly("Api")));
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IInternalNotificationService, InternalNotificationService>();
 builder.Services.AddScoped<IAtmService, AtmService>();

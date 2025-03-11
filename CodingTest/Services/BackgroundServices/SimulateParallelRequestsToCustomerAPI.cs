@@ -1,4 +1,4 @@
-﻿namespace CodingTest.Services.BackgroundServices;
+﻿namespace Api.Services.BackgroundServices;
 
 public class SimulateParallelRequestsToCustomerApi(
     IConfiguration configuration,
