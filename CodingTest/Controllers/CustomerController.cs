@@ -18,7 +18,7 @@ public class CustomerController(
 
     [HttpPost]
     [ProducesResponseType(typeof(BaseResponse<>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType(typeof(BaseResponse<>), (int)HttpStatusCode.BadRequest)]
     public IActionResult PostCustomers([FromBody] List<Customer> models)
     {
         var customers = service.AddCustomers(models);

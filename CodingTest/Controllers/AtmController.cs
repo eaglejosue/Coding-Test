@@ -9,6 +9,8 @@ public class AtmController(
     private const string DefaultMessage = "Combinations available:";
 
     [HttpGet("payout/{amount}")]
+    [ProducesResponseType(typeof(BaseResponse<>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(BaseResponse<>), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> GetPayoutCombinations(int amount)
     {
         var result = await service.GetPayoutCombinationsAsync(amount);
@@ -18,12 +20,8 @@ public class AtmController(
             msgResult = notificationService.Notifications.FirstOrDefault()!.Message;
 
         if (result.Count == 0)
-            return BadRequest(new { Message = "Invalid amount. Unable to dispense the requested value with available denominations." });
+            return BadRequest(BaseResponse.New<object>(null, [new InternalNotification("Invalid amount.", "Unable to dispense the requested value with available denominations.")]));
 
-        return Ok(new
-        {
-            Message = msgResult,
-            Result = result
-        });
+        return Ok(BaseResponse.New(result, [new InternalNotification("Success.", msgResult)]));
     }
 }
