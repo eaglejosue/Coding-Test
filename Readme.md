@@ -190,6 +190,7 @@ Abra o terminal e execute:
 
 ```bash
 k6 run post-customers-test.js
+```
 
 ### 2. Executando o Teste GET
 
@@ -197,3 +198,4 @@ Abra o terminal e execute:
 
 ```bash
 k6 run get-customers-test.js
+```
