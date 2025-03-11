@@ -2,17 +2,21 @@
 
 public interface ICustomerService
 {
-    Task<List<Customer>> GetAllAsync(CustomerFilters filters);
+    Task<List<Customer>?> GetAllAsync(CustomerFilters filters);
     IList<Customer>? AddCustomers(List<Customer> customers);
 }
 
 public class CustomerService(
-    DbCodingTest db,
+    DbCoding db,
+    IMemoryCache memoryCache,
     IValidator<Customer> addValidator,
     IInternalNotificationService notificationService) : ICustomerService
 {
-    public async Task<List<Customer>> GetAllAsync(CustomerFilters filters)
+    public async Task<List<Customer>?> GetAllAsync(CustomerFilters filters)
     {
+        if (memoryCache.TryGetValue(filters.CacheKey(), out List<Customer>? cachedCustomers))
+            return cachedCustomers;
+
         var predicate = PredicateBuilder.New<Customer>(true);
 
         if (filters.Id.HasValue)
@@ -37,7 +41,15 @@ public class CustomerService(
 
         var customers = await query.ToListAsync();
 
+        AddToCacheForFiveMinutes(memoryCache, filters.CacheKey(), customers);
+
         return customers;
+    }
+
+    private static void AddToCacheForFiveMinutes(IMemoryCache memoryCache, object key, List<Customer> customers)
+    {
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+        memoryCache.Set(key, customers, cacheEntryOptions);
     }
 
     private static readonly object _lock = new();
@@ -50,7 +62,6 @@ public class CustomerService(
 
             try
             {
-                var customerIds = customers.Select(s => s.Id);
                 var existingCustomers = db.Customers.ToList();
                 var existingCustomerIdsHash = existingCustomers.Select(s => s.Id).ToHashSet();
 
@@ -77,7 +88,7 @@ public class CustomerService(
                     return default;
 
                 var allCustomers = existingCustomers.Concat(validCustomers).ToList();
-                var sortedCustomers = SortCustomers(allCustomers);
+                var sortedCustomers = MergeSort(allCustomers);
 
                 db.Customers.RemoveRange(existingCustomers);
                 db.SaveChanges();
@@ -87,7 +98,7 @@ public class CustomerService(
 
                 transaction.Commit();
 
-                return allCustomers;
+                return sortedCustomers;
             }
             catch (Exception ex)
             {
@@ -99,22 +110,43 @@ public class CustomerService(
         return default;
     }
 
-    private static List<Customer> SortCustomers(List<Customer> customers)
+    private static List<Customer> MergeSort(List<Customer> customers)
     {
-        for (int i = 0; i < customers.Count - 1; i++)
+        if (customers.Count <= 1)
+            return customers;
+
+        int mid = customers.Count / 2;
+        List<Customer> left = customers.GetRange(0, mid);
+        List<Customer> right = customers.GetRange(mid, customers.Count - mid);
+
+        return Merge(MergeSort(left), MergeSort(right));
+    }
+
+    private static List<Customer> Merge(List<Customer> left, List<Customer> right)
+    {
+        List<Customer> result = [];
+        int i = 0, j = 0;
+
+        while (i < left.Count && j < right.Count)
         {
-            for (int j = i + 1; j < customers.Count; j++)
-            {
-                int lastNameComparison = string.Compare(customers[i].LastName, customers[j].LastName);
-                if (lastNameComparison > 0 || (lastNameComparison == 0 && string.Compare(customers[i].FirstName, customers[j].FirstName) > 0))
-                {
-                    var temp = customers[i];
-                    customers[i] = customers[j];
-                    customers[j] = temp;
-                }
-            }
+            if (CompareCustomers(left[i], right[j]) <= 0)
+                result.Add(left[i++]);
+            else
+                result.Add(right[j++]);
         }
 
-        return customers;
+        result.AddRange(left.GetRange(i, left.Count - i));
+        result.AddRange(right.GetRange(j, right.Count - j));
+
+        return result;
+    }
+
+    private static int CompareCustomers(Customer a, Customer b)
+    {
+        int lastNameComparison = string.Compare(a.LastName, b.LastName);
+        if (lastNameComparison != 0)
+            return lastNameComparison;
+
+        return string.Compare(a.FirstName, b.FirstName);
     }
 }

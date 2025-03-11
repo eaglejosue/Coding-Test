@@ -10,6 +10,7 @@ global using FluentValidation;
 global using LinqKit;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Caching.Memory;
 global using System.Net;
 global using System.Text;
 global using System.Text.Json;

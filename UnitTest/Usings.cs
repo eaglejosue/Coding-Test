@@ -1,0 +1,9 @@
+﻿global using CodingTest.Data;
+global using CodingTest.Data.Dtos;
+global using CodingTest.Data.Entities;
+global using CodingTest.Services;
+global using FluentValidation;
+global using FluentValidation.Results;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Caching.Memory;
+global using Moq;

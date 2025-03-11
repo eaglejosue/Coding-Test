@@ -1,12 +1,12 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<DbCodingTest>(o => o.UseSqlite("DataSource=CodingTest.db;Cache=Shared", b => b.MigrationsAssembly("CodingTest")));
-
+builder.Services.AddDbContext<DbCoding>(o => o.UseSqlite("DataSource=CodingTest.db;Cache=Shared", b => b.MigrationsAssembly("CodingTest")));
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<IInternalNotificationService, InternalNotificationService>();
 builder.Services.AddScoped<IAtmService, AtmService>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddCustomersValidator>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddHostedService<SimulateParallelRequestsToCustomerAPI>();
+builder.Services.AddHostedService<SimulateParallelRequestsToCustomerApi>();
 
 builder.Services.AddControllers().AddJsonOptions(o =>
 {
@@ -35,7 +35,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<DbCodingTest>();
+    var dbContext = services.GetRequiredService<DbCoding>();
     dbContext.Database.Migrate();
 }
 

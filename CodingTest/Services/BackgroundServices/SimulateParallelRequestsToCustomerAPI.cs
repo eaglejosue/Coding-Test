@@ -1,8 +1,8 @@
 ﻿namespace CodingTest.Services.BackgroundServices;
 
-public class SimulateParallelRequestsToCustomerAPI(
+public class SimulateParallelRequestsToCustomerApi(
     IConfiguration configuration,
-    ILogger<SimulateParallelRequestsToCustomerAPI> logger) : BackgroundService
+    ILogger<SimulateParallelRequestsToCustomerApi> logger) : BackgroundService
 {
     private static readonly HttpClient _httpClient = new();
     private readonly int _delayInSeconds = configuration.GetValue<int?>("BackgroundService:DelayInSeconds") ?? 5;

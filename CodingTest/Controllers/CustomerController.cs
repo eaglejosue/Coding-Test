@@ -12,31 +12,33 @@ public class CustomerController(
     public async Task<IActionResult> GetCustomers([FromQuery] CustomerFilters filters)
     {
         var customers = await service.GetAllAsync(filters);
-        if (customers.Count == 0) return NoContent();
-        return Ok(customers);
+        if (customers == null || customers?.Count == 0) return NoContent();
+        return Ok(BaseResponse.New(customers, notificationService.Notifications));
     }
 
     [HttpPost]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(BaseResponse<>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     public IActionResult PostCustomers([FromBody] List<Customer> models)
     {
         var customers = service.AddCustomers(models);
-        
-        if (notificationService.HasNotifications)
-        {
-            var notificationWithStatusCode = notificationService.Notifications.FirstOrDefault(f => f.HttpStatusCode != null);
-            if (notificationWithStatusCode != null)
-                return StatusCode(notificationWithStatusCode.HttpStatusCode.GetHashCode(), notificationService.Notifications);
-        }
+
+        var notificationWithStatusCode = notificationService.Notifications?.FirstOrDefault(f => f.HttpStatusCode != null);
+        if (notificationService.HasNotifications && notificationWithStatusCode != null)
+            return StatusCode(
+                notificationWithStatusCode.HttpStatusCode.GetHashCode(),
+                BaseResponse.New<object>(null, notificationService.Notifications)
+            );
 
         if (customers == null || customers?.Count == 0)
-            return BadRequest(new { Message = notificationService.Notifications });
+            return BadRequest(BaseResponse.New<object>(null, notificationService.Notifications));
 
-        return Ok(new
-        {
-            Message = notificationService.Notifications,
-            Result = customers
-        });
+        if (notificationService.HasNotifications)
+            return StatusCode(
+                HttpStatusCode.MultiStatus.GetHashCode(),
+                BaseResponse.New(customers, notificationService.Notifications)
+            );
+
+        return Ok(BaseResponse.New(customers));
     }
 }

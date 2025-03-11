@@ -1,6 +1,6 @@
 ﻿namespace CodingTest.Data;
 
-public class DbCodingTest(DbContextOptions<DbCodingTest> o, IConfiguration config) : DbContext(o)
+public class DbCoding(DbContextOptions<DbCoding> o) : DbContext(o)
 {
     public DbSet<Customer> Customers => Set<Customer>();
 

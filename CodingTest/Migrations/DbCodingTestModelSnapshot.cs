@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CodingTest.Migrations
 {
-    [DbContext(typeof(DbCodingTest))]
+    [DbContext(typeof(DbCoding))]
     partial class DbCodingTestModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
