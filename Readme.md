@@ -1,48 +1,48 @@
-# Documentação da API - Customer & ATM
+# API Documentation - Customer & ATM
 
-Esta API fornece funcionalidades para gerenciamento de clientes e simulação de saques (payout combinations) em um caixa eletrônico (ATM).
+This API provides functionalities for customer management and ATM payout simulations.
 
-## Sumário
+## Table of Contents
 
-- [Visão Geral](#visão-geral)
-- [Requisitos](#requisitos)
-- [Instalação e Execução](#instalação-e-execução)
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Installation and Execution](#installation-and-execution)
 - [Endpoints](#endpoints)
   - [CustomerController](#customercontroller)
     - [GET /api/customer](#get-apicustomer)
     - [POST /api/customer](#post-apicustomer)
   - [AtmController](#atmcontroller)
     - [GET /api/atm/payout/{amount}](#get-apiatmpayoutamount)
-- [Notas Adicionais](#notas-adicionais)
+- [Additional Notes](#additional-notes)
 
-## Visão Geral
+## Overview
 
-API desenvolvida em .NET 8, utilizando Entity Framework Core com banco de dados SQLite, para as seguintes funcionalidades:
+API developed using .NET 8, Entity Framework Core with SQLite database, providing:
 
-- **CustomerController**: Gerenciamento de clientes.
-- **AtmController**: Simulação de combinações para saques em caixa eletrônico.
+- **CustomerController**: Customer management.
+- **AtmController**: ATM payout combination simulations.
 
-## Requisitos
+## Requirements
 
 - .NET 8
 - SQLite
 - ASP.NET Core Runtime
 
-## Instalação e Execução
+## Installation and Execution
 
-1. **Clone o repositório:**
+1. **Clone the repository:**
    ```bash
-   git clone <url-do-repositório>
+   git clone <repository-url>
    ```
 
-2. **Restaure as dependências e execute a aplicação:**
+2. **Restore dependencies and run the application:**
    ```bash
-   cd <diretório-da-api>
+   cd <api-directory>
    dotnet restore
    dotnet run
    ```
 
-3. **API disponível em:** `http://localhost:5000`
+3. **API available at:** `http://localhost:5000`
 
 ## Endpoints
 
@@ -50,20 +50,20 @@ API desenvolvida em .NET 8, utilizando Entity Framework Core com banco de dados 
 
 #### GET `/api/customer`
 
-Retorna uma lista filtrada de clientes.
+Returns a filtered list of customers.
 
-**Parâmetros (opcionais):**
-- `filters`: Critérios para filtrar clientes.
+**Optional Parameters:**
+- `filters`: Criteria to filter customers.
 
-**Respostas:**
-- `200 OK`: Clientes retornados com sucesso.
-- `204 No Content`: Nenhum cliente encontrado.
+**Responses:**
+- `200 OK`: Customers successfully returned.
+- `204 No Content`: No customers found.
 
 #### POST `/api/customer`
 
-Cria novos clientes.
+Creates new customers.
 
-**Corpo da Requisição:**
+**Request Body:**
 ```json
 [
   {
@@ -81,24 +81,24 @@ Cria novos clientes.
 ]
 ```
 
-**Respostas:**
-- `200 OK`: Clientes criados com sucesso.
-- `400 Bad Request`: Erro ao processar requisição.
-- `207 Multi-Status`: Requisição parcialmente concluída com notificações.
+**Responses:**
+- `200 OK`: Customers successfully created.
+- `400 Bad Request`: Error processing request.
+- `207 Multi-Status`: Request partially completed with notifications.
 
 ### AtmController
 
 #### GET `/api/atm/payout/{amount}`
 
-Simula combinações de notas para saque.
+Simulates combinations of notes for withdrawal.
 
-**Parâmetros:**
-- `amount`: Valor desejado para saque.
+**Parameters:**
+- `amount`: Desired withdrawal amount.
 
-**Exemplo:** `/api/atm/payout/230`
+**Example:** `/api/atm/payout/230`
 
-**Respostas:**
-- `200 OK`: Retorna combinações possíveis.
+**Responses:**
+- `200 OK`: Returns possible combinations.
   ```json
   {
     "Message": "Combinations available:",
@@ -116,86 +116,82 @@ Simula combinações de notas para saque.
   }
   ```
 
-- `400 Bad Request`: Valor inválido ou indisponível.
+- `400 Bad Request`: Invalid or unavailable amount.
   ```json
   {"Message": "Invalid amount. Unable to dispense the requested value with available denominations."}
   ```
 
-
-## Notas Adicionais
-### Tecnologias e Pacotes
+## Additional Notes
+### Technologies and Packages
 
 - .NET Core 8
 - Entity Framework Core (SQLite)
 - FluentValidation (11.10.0)
 - FluentValidation.AspNetCore (11.3.0)
 - LinqKit (1.3.8)
-- Swashbuckle.AspNetCore (6.6.2) para documentação Swagger
+- Swashbuckle.AspNetCore (6.6.2) for Swagger documentation
 
-### Testes
+### Testing
 
-- **Carga:** k6
-- **Unitários:** xUnit, FluentAssertions, Moq, coverlet.collector
-- **Integração:** Microsoft.AspNetCore.Mvc.Testing, xUnit, FluentAssertions, coverlet.collector
+- **Load:** k6
+- **Unit:** xUnit, FluentAssertions, Moq, coverlet.collector
+- **Integration:** Microsoft.AspNetCore.Mvc.Testing, xUnit, FluentAssertions, coverlet.collector
 
 ### Patterns
 
-- Validações e notificações são tratadas com Notification Pattern.
-- API desenvolvida com práticas REST e tratamento consistente de erros.
+- Validations and notifications handled via Notification Pattern.
+- API built following REST best practices with consistent error handling.
 
-### Algoritmos
+### Algorithms
 
-- **ATM:** Algoritmo simples que percorre combinações de denominações para encontrar combinações válidas de saque.
-- **Customer:** Ordenação dos clientes por sobrenome e nome utilizando algoritmo MergeSort.
+- **ATM:** Simple algorithm iterating through denomination combinations to find valid payout combinations.
+- **Customer:** Customers sorted by last name and first name using MergeSort algorithm.
 
 ---
 
+# Load Testing with k6 - Customer API
 
+This repository contains load-testing scripts for the **POST** and **GET** endpoints of your customer service, using [k6](https://k6.io/).
 
+## Prerequisites
 
+- [Node.js](https://nodejs.org/) (optional for running k6 scripts via npm)
+- [k6](https://k6.io/docs/getting-started/installation) installed locally
+- API running locally (e.g., `http://localhost:5000`)
 
-# Testes de Carga com k6 - API Customer
-
-Este repositório contém scripts de teste de carga para os endpoints **POST** e **GET** do seu serviço de clientes, utilizando o [k6](https://k6.io/).
-
-## Pré-requisitos
-
-- [Node.js](https://nodejs.org/) (para executar os scripts k6 se você optar por usá-los via npm ou diretamente via k6)
-- [k6](https://k6.io/docs/getting-started/installation) instalado na sua máquina
-- A API rodando localmente (ex.: `http://localhost:5000`)
-
-## Estrutura dos Arquivos
+## File Structure
 
 - **config.js**  
-  Contém a configuração base, parâmetros HTTP, e opções de carga (VUs e duração) para os testes.
+  Contains base configuration, HTTP parameters, and load options (VUs and duration).
 
 - **payload.js**  
-  Gera dinamicamente uma lista de 50 clientes. Os nomes são selecionados aleatoriamente a partir dos arrays de _firstNames_ e _lastNames_.  
-  Cada cliente possui:  
-  - **id**: Sequencial  
-  - **firstName** e **lastName**: Nomes aleatórios  
-  - **age**: Valor aleatório entre 18 e 90
+  Dynamically generates a list of 50 customers. Names are randomly selected from arrays of _firstNames_ and _lastNames_.  
+  Each customer has:  
+  - **id**: Sequential  
+  - **firstName** and **lastName**: Random names  
+  - **age**: Random age between 18 and 90
 
 - **post-customers-test.js**  
-  Script para testar o endpoint **POST** (`/api/customer`). Envia o payload de clientes e valida o status da resposta (200 ou 400).
+  Script for testing the **POST** endpoint (`/api/customer`). Sends customer payload and validates response status (200 or 400).
 
 - **get-customers-test.js**  
-  Script para testar o endpoint **GET** (`/api/customer`). Envia uma requisição GET com filtros como Id, Age, Name em parâmetro para simular diferentes cenários. Valida o status da resposta (200 ou 204).
+  Script for testing the **GET** endpoint (`/api/customer`). Sends GET request with filters like Id, Age, Name to simulate scenarios. Validates response status (200 or 204).
 
-## Como Rodar os Testes
+## How to Run Tests
 
-### 1. Executando o Teste POST
+### 1. Executing the POST Test
 
-Abra o terminal e execute:
+Open terminal and run:
 
 ```bash
 k6 run post-customers-test.js
 ```
 
-### 2. Executando o Teste GET
+### 2. Executing the GET Test
 
-Abra o terminal e execute:
+Open terminal and run:
 
 ```bash
 k6 run get-customers-test.js
 ```
+
