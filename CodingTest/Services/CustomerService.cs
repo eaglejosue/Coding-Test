@@ -8,13 +8,14 @@ public interface ICustomerService
 
 public class CustomerService(
     DbCoding db,
-    IMemoryCache memoryCache,
+    ICacheService cacheService,
     IValidator<Customer> addValidator,
     IInternalNotificationService notificationService) : ICustomerService
 {
     public async Task<List<Customer>?> GetAllAsync(CustomerFilters filters)
     {
-        if (memoryCache.TryGetValue(filters.CacheKey(), out List<Customer>? cachedCustomers))
+        var cachedCustomers = cacheService.Get<List<Customer>?>(filters.CacheKey());
+        if (cachedCustomers != null)
             return cachedCustomers;
 
         var predicate = PredicateBuilder.New<Customer>(true);
@@ -41,15 +42,9 @@ public class CustomerService(
 
         var customers = await query.ToListAsync();
 
-        AddToCacheForFiveMinutes(memoryCache, filters.CacheKey(), customers);
+        cacheService.Set(filters.CacheKey(), customers);
 
         return customers;
-    }
-
-    private static void AddToCacheForFiveMinutes(IMemoryCache memoryCache, object key, List<Customer> customers)
-    {
-        var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
-        memoryCache.Set(key, customers, cacheEntryOptions);
     }
 
     private static readonly object _lock = new();
@@ -97,6 +92,8 @@ public class CustomerService(
                 db.SaveChanges();
 
                 transaction.Commit();
+
+                cacheService.ClearAll();
 
                 return sortedCustomers;
             }

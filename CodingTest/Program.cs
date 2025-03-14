@@ -1,11 +1,15 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DbCoding>(o => o.UseSqlite("DataSource=CodingTest.db;Cache=Shared", b => b.MigrationsAssembly("Api")));
+
 builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ICacheService, CacheService>();
+
 builder.Services.AddScoped<IInternalNotificationService, InternalNotificationService>();
 builder.Services.AddScoped<IAtmService, AtmService>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddCustomersValidator>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 builder.Services.AddHostedService<SimulateParallelRequestsToCustomerApi>();
 
 builder.Services.AddControllers().AddJsonOptions(o =>
